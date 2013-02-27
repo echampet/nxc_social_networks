@@ -52,8 +52,15 @@ class nxcSocialNetworksLoginHandlerTwitter extends nxcSocialNetworksLoginHandler
 		);
 
 		$filename = 'var/cache/'. substr( strrchr( $userInfo->profile_image_url, '/' ), 1 );
-		if( copy( $userInfo->profile_image_url, $filename ) ) {
+
+		$ch = curl_init($userInfo->profile_image_url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$data = curl_exec($ch);
+		curl_close($ch);
+		if($data){
+			file_put_contents($filename,$data);
 			$attributes['image'] = $filename;
+			unset($data);
 		};
 
 		return $attributes;

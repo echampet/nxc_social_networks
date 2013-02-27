@@ -34,13 +34,17 @@ class nxcSocialNetworksOAuth2Facebook extends nxcSocialNetworksOAuth2
 		}
 		eZURI::transformURI( $redirectURL, false, 'full' );
 
-		$data = file_get_contents(
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL,
 			'https://graph.facebook.com/oauth/access_token?' .
 			'client_id=' . $this->appSettings['key'] . '&' .
 			'client_secret=' . $this->appSettings['secret'] . '&' .
 			'code=' . $http->getVariable( 'code' ) . '&' .
 			'redirect_uri=' . $redirectURL
 		);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$data = curl_exec($ch);
+		curl_close($ch);
 
 		if( strpos( $data, 'access_token=' ) !== false ) {
 			preg_match( '/access_token=([^&]*)/i', $data, $matches );
