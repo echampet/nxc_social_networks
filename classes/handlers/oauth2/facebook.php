@@ -47,7 +47,7 @@ class nxcSocialNetworksOAuth2Facebook extends nxcSocialNetworksOAuth2
 			if( isset( $matches[1] ) ) {
 				return array(
 					'token'  => $matches[1],
-					'secret' => null
+					'secret' => ''
 				);
 			}
 		}
