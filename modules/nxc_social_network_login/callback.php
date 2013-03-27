@@ -48,16 +48,14 @@ try{
 // Trying to fetch current user from eZ Publish
 $object = false;
 $uniqueIdentifier = nxcSocialNetworksLoginHandler::getUniqueIdentifier();
-if( $uniqueIdentifier == 'email' ) {
-	$account = explode( '|', $attributes['user_account'] );
-	if( isset( $account[1] ) ) {
-		$user = eZUser::fetchByEmail( $account[1] );
-		if( $user instanceof eZUser ) {
-			$object = $user->attribute( 'contentobject' );
-		}
+$account = explode( '|', $attributes['user_account'] );
+if( isset( $account[1] ) ) {
+	$user = eZUser::fetchByEmail( $account[1] );
+	if( $user instanceof eZUser ) {
+		$object = $user->attribute( 'contentobject' );
+	} else {
+		$object = eZContentObject::fetchByRemoteID( $remoteID );
 	}
-} else {
-	$object = eZContentObject::fetchByRemoteID( $remoteID );
 }
 
 if( $object instanceof eZContentObject === false ) {
@@ -75,7 +73,7 @@ if( $object instanceof eZContentObject === false ) {
 			'class_identifier' => $userClass->attribute( 'identifier' ),
 			'creator_id'       => $ini->variable( 'UserSettings', 'UserCreatorID' ),
 			'section_id'       => $ini->variable( 'UserSettings', 'DefaultSectionID' ),
-			'remote_id'        => $uniqueIdentifier == 'remote_id' ? $remoteID : null,
+			'remote_id'        => $remoteID,
 			'attributes'       => $attributes
 		)
 	);
